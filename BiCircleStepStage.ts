@@ -1,11 +1,11 @@
 const w : number = window.innerWidth, h : number = window.innerHeight
 const color : string = '#673AB7'
 const nodes : number = 5
-const defineArc : Function = (context, r) => {
+const defineArc : Function = (context : CanvasRenderingContext2D, r : number) => {
   context.beginPath()
   context.arc(0, 0, r, 0, 2 * Math.PI)
 }
-const drawBSNode : Function = (context, i, scale) => {
+const drawBSNode : Function = (context : CanvasRenderingContext2D, i : number, scale : number) => {
     const gap : number = h / (nodes + 1)
     const r : number = gap/3
     context.fillStyle = color
@@ -22,7 +22,7 @@ const drawBSNode : Function = (context, i, scale) => {
         defineArc(context, r)
         context.stroke()
         defineArc(context, r)
-        context.clipPath()
+        context.clip()
         context.fillRect(-r, -r, 2 * r * sc, 2 * r)
         context.restore()
     }
@@ -96,5 +96,51 @@ class Animator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class BCSNode {
+    prev : BCSNode
+    next : BCSNode
+    state : State = new State()
+
+    constructor(private i : number) {
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < nodes - 1) {
+            this.next = new BCSNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(ctx : CanvasRenderingContext2D) {
+        drawBSNode(ctx, this.i, this.state.scale)
+        if (this.next) {
+            this.next.draw(ctx)
+        }
+    }
+
+    update(cb : Function) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb : Function) {
+        this.state.startUpdating(cb)
+    }
+
+    getNext(dir : number, cb : Function) : BCSNode {
+        var curr : BCSNode = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        if (cb) {
+            cb()
+        }
+        return this
     }
 }
