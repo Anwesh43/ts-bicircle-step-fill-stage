@@ -167,3 +167,25 @@ class BiCircleStep {
         this.curr.startUpdating(cb)
     }
 }
+
+class Renderer {
+    bcs : BiCircleStep = new BiCircleStep()
+    animator : Animator = new Animator()
+
+    render(context : CanvasRenderingContext2D) {
+        this.bcs.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.bcs.startUpdating(() => {
+            this.animator.start(() => {
+                if (cb) {
+                    cb()
+                }
+                this.bcs.update(() => {
+                    this.animator.stop()
+                })
+            })
+        })
+    }
+}
