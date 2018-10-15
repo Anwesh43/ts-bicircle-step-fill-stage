@@ -12,7 +12,7 @@ const drawBSNode : Function = (context : CanvasRenderingContext2D, i : number, s
     context.strokeStyle = color
     context.lineWidth = Math.min(w, h) / 60
     context.save()
-    context.translate(this.i * gap + gap, h/2)
+    context.translate(w/2, i * gap + gap)
     for(var j = 0; j < 2; j++) {
         const sc : number = Math.min(0.5, Math.max(scale - 0.5 * j, 0)) * 2
         const sf : number = 1 - 2 * j
@@ -54,6 +54,7 @@ class BiCircleStepStage {
 
     static init() {
         const stage : BiCircleStepStage = new BiCircleStepStage()
+        stage.initCanvas()
         stage.render()
         stage.handleTap()
     }
@@ -186,6 +187,9 @@ class Renderer {
                 }
                 this.bcs.update(() => {
                     this.animator.stop()
+                    if (cb) {
+                        cb()
+                    }
                 })
             })
         })
