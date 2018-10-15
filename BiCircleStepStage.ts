@@ -15,8 +15,10 @@ const drawBSNode : Function = (context, i, scale) => {
     context.translate(this.i * gap + gap, h/2)
     for(var j = 0; j < 2; j++) {
         const sc : number = Math.min(0.5, Math.max(scale - 0.5 * j, 0)) * 2
+        const sf : number = 1 - 2 * j
         context.save()
-        context.translate(-r + 2 * r * j, 0)
+        context.scale(sf, 1)
+        context.translate(r, 0)
         defineArc(context, r)
         context.stroke()
         defineArc(context, r)
